@@ -71,7 +71,6 @@ var updateSuite = function updateSuite (suite, info, step) {
     }
     suite.tests += 1;
     updateAssertions(suite, step.type);
-    suite.steps.push(this._step);
   }
 };
 
@@ -164,6 +163,7 @@ Aggregator.prototype.startStep  = function startStep (testRun, step) {
 Aggregator.prototype.endStep = function endStep (testRun, step, info) {
   updateStep(this._step, step);
   updateSuite(this._suite, info, step);
+  this._suite.steps.push(this._step);
   this._step = null;
 };
 
