@@ -118,6 +118,7 @@ var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
       return;
     }
     fs.writeFileSync(path, data.toString({pretty:true}));
+    console.log('Report saved to %s', path);
   });
 };
 
