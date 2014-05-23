@@ -123,7 +123,7 @@ var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
 };
 
 var logOnError = function logOnError (status, step, /*null*/ message) {
-  if (step.noreport || status.success) { return; }
+  if (!!step.noreport || !!status.success) { return; }
   message = '[FAIL] ' + step.name;
   console.log(message);
 };
