@@ -13,10 +13,9 @@
   output from happening, just like the --silent command.
 
   author:  david linse
-  version: 0.1.4
+  version: 0.1.5
 
   TODO: add stderr to to testsuite xml
-  TODO: add uid to report something prop..
   TODO: add test-suites support (single file ?)
   TODO: support --parallel run
 */
@@ -120,6 +119,12 @@ var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
     fs.writeFileSync(path, data.toString({pretty:true}));
     console.log('Report saved to %s', path);
   });
+};
+
+var log = function log (status, step, message) {
+  if (step.noreport) { return; }
+  message = (status.success ? '[PASS] ' : '[FAIL] ') + step.name;
+  console.log(message);
 };
 
 var logOnError = function logOnError (status, step, /*null*/ message) {
