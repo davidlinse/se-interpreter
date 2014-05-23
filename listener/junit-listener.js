@@ -121,6 +121,12 @@ var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
   });
 };
 
+var logOnError = function logOnError (status, step, /*null*/ message) {
+  if (step.noreport || status.success) { return; }
+  message = '[FAIL] ' + step.name;
+  console.log(message);
+};
+
 //--
 
 var Aggregator = function Aggregator (testRun, opts, runner) {
@@ -161,6 +167,7 @@ Aggregator.prototype.startStep  = function startStep (testRun, step) {
 
 
 Aggregator.prototype.endStep = function endStep (testRun, step, info) {
+  logOnError(info, step);
   updateStep(this._step, step);
   updateSuite(this._suite, info, step);
   this._suite.steps.push(this._step);
