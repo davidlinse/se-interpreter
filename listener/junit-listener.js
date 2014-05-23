@@ -146,11 +146,9 @@ var Aggregator = function Aggregator (testRun, opts, runner) {
   this._runnr = runner;
 };
 
-
 Aggregator.instances = 0;
 Aggregator.VERSION = '0.1.3';
 Aggregator.SE_INTERPRETER_SUPPORT = '1.0.6';
-
 
 Aggregator.prototype.startTestRun = function(testRun, info) {
   if (!info.success) {
@@ -161,12 +159,10 @@ Aggregator.prototype.startTestRun = function(testRun, info) {
   this._suite = getSuite(testRun);
 };
 
-
 Aggregator.prototype.startStep  = function startStep (testRun, step) {
   this._step = getStep(step);
   this._step.name = testRun.name || '';
 };
-
 
 Aggregator.prototype.endStep = function endStep (testRun, step, info) {
   logOnError(info, step);
@@ -175,7 +171,6 @@ Aggregator.prototype.endStep = function endStep (testRun, step, info) {
   this._suite.steps.push(this._step);
   this._step = null;
 };
-
 
 Aggregator.prototype.endTestRun = function(testRun /* ,info */) {
   var report = generateReport(this._suite, testRun);
