@@ -110,8 +110,6 @@ var generateReport = function generateReport (suite) {
 
 var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
 
-  var dest = pathLib.join(path);
-
   var dirname  = pathLib.dirname(path);
 
   ensure(dirname, 0777, function ensureDirCB (err) {
@@ -119,7 +117,7 @@ var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
       console.log('Error '+ utils.inspect(err));
       return;
     }
-    fs.writeFileSync(dest, data.toString({pretty:true}));
+    fs.writeFileSync(path, data.toString({pretty:true}));
   });
 };
 
