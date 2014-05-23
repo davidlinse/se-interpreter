@@ -154,9 +154,10 @@ Aggregator.SE_INTERPRETER_SUPPORT = '1.0.6';
 
 Aggregator.prototype.startTestRun = function(testRun, info) {
   if (!info.success) {
-    console.log('ERROR '+ utils.inspect(info));
+    console.log('[ERROR] '+ utils.inspect(info));
     return;
   }
+  console.log('[Aggregator-'+this._uid+']::startTestRun - '+ testRun.name);
   this._suite = getSuite(testRun);
 };
 
@@ -178,6 +179,7 @@ Aggregator.prototype.endStep = function endStep (testRun, step, info) {
 
 Aggregator.prototype.endTestRun = function(testRun /* ,info */) {
   var report = generateReport(this._suite, testRun);
+  console.log('[Aggregator-'+this._uid+']::endTestRun - '+ this.testRun.name);
   writeReport(this._opts.path, report);
 };
 
