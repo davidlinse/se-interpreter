@@ -118,7 +118,14 @@ var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
       return;
     }
     fs.writeFileSync(path, data.toString({pretty:true}));
+    console.log('Report saved to %s', path);
   });
+};
+
+var logOnError = function logOnError (status, step, /*null*/ message) {
+  if (step.noreport || status.success) { return; }
+  message = '[FAIL] ' + step.name;
+  console.log(message);
 };
 
 //--
@@ -147,9 +154,10 @@ Aggregator.SE_INTERPRETER_SUPPORT = '1.0.6';
 
 Aggregator.prototype.startTestRun = function(testRun, info) {
   if (!info.success) {
-    console.log('ERROR '+ utils.inspect(info));
+    console.log('[ERROR] '+ utils.inspect(info));
     return;
   }
+  console.log('[Aggregator-'+this._uid+']::startTestRun - '+ testRun.name);
   this._suite = getSuite(testRun);
 };
 
@@ -161,6 +169,7 @@ Aggregator.prototype.startStep  = function startStep (testRun, step) {
 
 
 Aggregator.prototype.endStep = function endStep (testRun, step, info) {
+  logOnError(info, step);
   updateStep(this._step, step);
   updateSuite(this._suite, info, step);
   this._suite.steps.push(this._step);
@@ -170,6 +179,7 @@ Aggregator.prototype.endStep = function endStep (testRun, step, info) {
 
 Aggregator.prototype.endTestRun = function(testRun /* ,info */) {
   var report = generateReport(this._suite, testRun);
+  console.log('[Aggregator-'+this._uid+']::endTestRun - '+ this.testRun.name);
   writeReport(this._opts.path, report);
 };
 
