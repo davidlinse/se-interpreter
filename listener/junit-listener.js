@@ -13,7 +13,7 @@
   output from happening, just like the --silent command.
 
   author:  david linse
-  version: 0.1.3
+  version: 0.1.4
 
   TODO: add stderr to to testsuite xml
   TODO: add uid to report something prop..
@@ -26,7 +26,6 @@ var fs      = require('fs');
 var pathLib = require('path');
 var ensure  = require('ensureDir');
 var utils   = require('util');
-
 
 
 var updateTime = function updateTime (/* step or suite */ subject) {
