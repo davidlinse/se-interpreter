@@ -128,12 +128,15 @@ var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
 
 var Aggregator = function Aggregator (testRun, opts, runner) {
 
-  Aggregator.instances += (this._uid = Aggregator.instances + 1);
+  Aggregator.instances = (this._uid = Aggregator.instances + 1);
 
-  opts.path = opts.path ?
-              opts.path : pathLib.join(process.cwd(), 'junit.xml');
+  var reportFileName = 'junit-'+ testRun.name +'-'+ this._uid +'.xml';
 
-  this._opts  = opts;
+  this._opts      = JSON.parse(JSON.stringify(opts));
+  this._opts.path = opts.path ?
+                      pathLib.join(opts.path, reportFileName) :
+                      pathLib.join(process.cwd(), reportFileName);
+
   this._suite = null;
   this._step  = null;
   this._runnr = runner;
