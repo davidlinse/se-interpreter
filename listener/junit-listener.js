@@ -42,7 +42,7 @@ var formatTime = function formatTime (subject) {
 var getSuite = function getSuite (testRun) {
   return {
     package: testRun.browserOptions.browserName || '',
-    name: testRun.name,
+    name: sanitize(testRun.name),
     tests: 0,
     errors: 0,
     failures: 0,
@@ -120,6 +120,10 @@ var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
   });
 };
 
+var sanitize = function sanizite(reportName){
+   return reportName.replace(/,/g, '').replace(/\s+/g, '_');
+};
+
 var log = function log (status, step, message) {
   if (step.noreport) { return; }
   message = (status.success ? '[PASS] ' : '[FAIL] ') + step.name || '';
@@ -179,7 +183,7 @@ Aggregator.prototype.endStep = function endStep (testRun, step, info) {
 Aggregator.prototype.endTestRun = function(testRun /* ,info */) {
   var report = generateReport(this._suite, testRun);
   console.log('[Aggregator-'+this._uid+']::endTestRun - '+ this.testRun.name);
-  writeReport(this._opts.path, report);
+  writeReport(sanitize(this._opts.path), report);
 };
 
 
