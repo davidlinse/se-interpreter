@@ -13,7 +13,7 @@
   output from happening, just like the --silent command.
 
   author:  david linse
-  version: 0.1.5
+  version: 0.1.6
 
   TODO: add stderr to to testsuite xml
   TODO: add test-suites support (single file ?)
@@ -106,7 +106,6 @@ var generateReport = function generateReport (suite) {
   return xml;
 };
 
-
 var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
 
   var dirname  = pathLib.dirname(path);
@@ -123,13 +122,13 @@ var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
 
 var log = function log (status, step, message) {
   if (step.noreport) { return; }
-  message = (status.success ? '[PASS] ' : '[FAIL] ') + step.name;
+  message = (status.success ? '[PASS] ' : '[FAIL] ') + step.name || '';
   console.log(message);
 };
 
 var logOnError = function logOnError (status, step, /*null*/ message) {
-  if (!!step.noreport || !!status.success) { return; }
-  message = '[FAIL] ' + step.name;
+  if (step.noreport || status.success) { return; }
+  message = '[FAIL] ' + step.name || '';
   console.log(message);
 };
 
