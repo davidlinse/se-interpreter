@@ -182,7 +182,7 @@ Aggregator.prototype.endStep = function endStep (testRun, step, info) {
 
 Aggregator.prototype.endTestRun = function(testRun /* ,info */) {
   var report = generateReport(this._suite, testRun);
-  console.log('[Aggregator-'+this._uid+']::endTestRun - '+ this.testRun.name);
+  console.log('[Aggregator-'+this._uid+']::endTestRun - '+ testRun.name);
   writeReport(sanitize(this._opts.path), report);
 };
 
