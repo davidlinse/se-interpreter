@@ -13,7 +13,7 @@
   output from happening, just like the --silent command.
 
   author:  david linse
-  version: 0.1.6
+  version: 0.1.7-alpha3
 
   TODO: add stderr to to testsuite xml
   TODO: add test-suites support (single file ?)
@@ -58,7 +58,11 @@ var getStep = function getStep (step) {
     classname: step.name || step.type,
     name: step.name || '',
     assertions: 0,
-    time: new Date()
+    time: new Date(),
+    failure: {
+      type: null,
+      text: null
+    }
   };
 };
 
@@ -72,9 +76,17 @@ var updateSuite = function updateSuite (suite, info, step) {
   }
 };
 
-var updateStep = function updateStep (step, info) {
-  updateTime(step);
-  updateAssertions(step, info.type);
+var updateStep = function updateStep (_step, info, step) {
+  updateTime(_step);
+  updateAssertions(_step, step.type);
+  updateFailures(_step, info, step);
+};
+
+var updateFailures = function updateFailures (_step, info, step) {
+  if (!info.success) {
+    _step.failure.type = step.type;
+    _step.failure['#text'] = step.name || step.type;
+  }
 };
 
 var addAttributes = function add (node, data) {
@@ -97,6 +109,11 @@ var generateReport = function generateReport (suite) {
   suite.steps.forEach(function (testCase) {
     formatTime(testCase);
     var node = xml.ele('testcase');
+
+    if (!!testCase.failure.type) {
+      node.ele('failure', {'type': testCase.failure.type}, testCase.failure.text);
+    }
+    delete testCase.failure;
     addAttributes(node, testCase);
   });
 
@@ -121,7 +138,7 @@ var writeReport = function writeReport (path, /* xmlbuilder*/ data) {
 };
 
 var sanitize = function sanizite(reportName){
-   return reportName.replace(/,/g, '').replace(/\s+/g, '_');
+  return reportName.replace(/,/g, '').replace(/\s+/g, '_');
 };
 
 var log = function log (status, step, message) {
@@ -155,7 +172,7 @@ var Aggregator = function Aggregator (testRun, opts, runner) {
 };
 
 Aggregator.instances = 0;
-Aggregator.VERSION = '0.1.3';
+Aggregator.VERSION = '0.1.7-alpha3';
 Aggregator.SE_INTERPRETER_SUPPORT = '1.0.6';
 
 Aggregator.prototype.startTestRun = function(testRun, info) {
@@ -174,7 +191,7 @@ Aggregator.prototype.startStep  = function startStep (testRun, step) {
 
 Aggregator.prototype.endStep = function endStep (testRun, step, info) {
   logOnError(info, step);
-  updateStep(this._step, step);
+  updateStep(this._step, info, step);
   updateSuite(this._suite, info, step);
   this._suite.steps.push(this._step);
   this._step = null;
