@@ -76,17 +76,17 @@ var updateSuite = function updateSuite (suite, info, step) {
   }
 };
 
+var updateFailures = function updateFailures (_step, info, step) {
+  if (!info.success) {
+    _step.failure.type = step.type;
+    _step.failure.text = step.name || step.type;
+  }
+};
+
 var updateStep = function updateStep (_step, info, step) {
   updateTime(_step);
   updateAssertions(_step, step.type);
   updateFailures(_step, info, step);
-};
-
-var updateFailures = function updateFailures (_step, info, step) {
-  if (!info.success) {
-    _step.failure.type = step.type;
-    _step.failure['#text'] = step.name || step.type;
-  }
 };
 
 var addAttributes = function add (node, data) {
