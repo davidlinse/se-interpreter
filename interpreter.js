@@ -24,7 +24,7 @@ var util = require('util');
 var pathLib = require('path');
 var fs = require('fs');
 var colors = require('colors');
-var libxml = require('libxmljs');
+// var libxml = require('libxmljs');
 
 // Common functionality for assert/verify/waitFor/store step types. Only the code for actually
 // getting the value has to be implemented individually.
@@ -123,7 +123,7 @@ var TestRun = function(script, name, initialVars) {
 TestRun.prototype.start = function(callback, webDriverToUse) {
   callback = callback || function() {};
   this.browserOptions.name = this.name;
-  
+
   if (webDriverToUse) {
     this.wd = webDriverToUse;
     var info = { 'success': true, 'error': null };
@@ -483,7 +483,7 @@ function parseSuiteFile(path, fileContents, testRuns, silencePrints, listenerFac
       parseScriptFile(scriptLocation.path, null, testRuns, silencePrints, listenerFactory, exeFactory, browserOptions, driverOptions, listenerOptions, dataSources);
     }
   });
-  
+
   if (shareState && testRuns.length > prevTestRunsLength + 1) {
     for (var i = prevTestRunsLength; i < testRuns.length - 1; i++) {
       testRuns[i].quitDriverAfterUse = false;
@@ -594,14 +594,14 @@ var xmlSource = {
       }
     }
     var rawData = fs.readFileSync(path, "UTF-8");
-    var doc = libxml.parseXml(rawData);
-    return doc.find("/testdata/test").map(function(child) {
-      var row = {};
-      child.attrs().forEach(function(attr) {
-        row[subEnvVars(attr.name())] = subEnvVars(attr.value());
-      });
-      return row;
-    });
+    // var doc = libxml.parseXml(rawData);
+    // return doc.find("/testdata/test").map(function(child) {
+    //   var row = {};
+    //   child.attrs().forEach(function(attr) {
+    //     row[subEnvVars(attr.name())] = subEnvVars(attr.value());
+    //   });
+    //   return row;
+    // });
   }
 };
 
@@ -745,7 +745,10 @@ if (argv.executorFactory) {
 
 var testRuns = [];
 
-console.log(("SE-Interpreter " + interpreter_version));
+if (!argv.silent || !argv.quiet || !argv.noPrint) {
+  console.log(("SE-Interpreter " + interpreter_version));
+}
+
 
 browserOptionsList.forEach(function(browserOptions) {
   argv._.forEach(function(pathToGlob) {

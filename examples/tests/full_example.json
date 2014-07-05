@@ -330,10 +330,6 @@
         "text": "comments"
     },
     {
-        "type": "saveScreenshot",
-        "file": "/tmp/screen.png"
-    },
-    {
         "type": "print",
         "text": "this is some debug text"
     },
