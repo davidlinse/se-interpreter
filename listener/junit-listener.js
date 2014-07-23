@@ -1,3 +1,5 @@
+/* jshint unused:true */
+
 /**
   A se-interpreter listener that reports test results in junit-xml format.
 
@@ -133,7 +135,7 @@ var writeReport = function writeReport (name, path, /* xmlbuilder*/ data) {
       return;
     }
     fs.writeFileSync(path, data.toString({pretty:true}));
-    console.log(name + ' - Report saved to %s', path);
+    // console.log(name + ' - Report saved to %s', path);
   });
 };
 
@@ -141,7 +143,7 @@ var sanitize = function sanizite(reportName){
   return reportName.replace(/,/g, '').replace(/\s+/g, '_');
 };
 
-var log = function log (name, status, step, message) {
+var log = function log (name, status, step, /*null*/ message) {
   if (step.noreport) { return; }
   message = (status.success ? '[PASS] ' : '[FAIL] ') + step.name || '';
   console.log(name +' - '+ message);
@@ -179,10 +181,10 @@ Aggregator.SE_INTERPRETER_SUPPORT = '1.0.6';
 
 Aggregator.prototype.startTestRun = function(testRun, info) {
   if (!info.success) {
-    console.log('[ERROR] '+ utils.inspect(info));
+    console.log('[ERROR] '+ this._name +' '+ utils.inspect(info));
     return;
   }
-  console.log(this._name +'::startTestRun - '+ testRun.name);
+  // console.log(this._name +'::startTestRun - '+ testRun.name);
   this._suite = getSuite(testRun);
 };
 
@@ -199,9 +201,12 @@ Aggregator.prototype.endStep = function endStep (testRun, step, info) {
   this._step = null;
 };
 
-Aggregator.prototype.endTestRun = function(testRun /* ,info */) {
+Aggregator.prototype.endTestRun = function(testRun, info) {
   var report = generateReport(this._suite, testRun);
-  console.log(this._name +'::endTestRun - '+ testRun.name);
+  if (!info.success) {
+    console.log('[ERROR] '+ this._name +' '+ utils.inspect(info));
+    return;
+  }
   writeReport(this._name, sanitize(this._opts.path), report);
 };
 
