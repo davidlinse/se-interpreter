@@ -131,7 +131,7 @@ var writeReport = function writeReport (name, path, /* xmlbuilder*/ data) {
 
   ensure(dirname, 0777, function ensureDirCB (err) {
     if (err) {
-      console.log('Error '+ utils.inspect(err));
+      console.log('[Error] '+ utils.inspect(err));
       return;
     }
     fs.writeFileSync(path, data.toString({pretty:true}));
@@ -150,9 +150,9 @@ var log = function log (name, status, step, /*null*/ message) {
 };
 
 var logOnError = function logOnError (name, status, step, /*null*/ message) {
-  if (step.noreport || status.success) { return; }
-  message = '[FAIL] ' + step.name || '';
-  console.log(name +' - '+ message);
+  if (status.success === true) { return; }
+  message = '[FAIL] ' + name || '' +  utils.inspect(step);
+  console.log(message);
 };
 
 //--
@@ -172,7 +172,7 @@ var Aggregator = function Aggregator (testRun, opts, runner) {
   this._step  = null;
   this._runnr = runner;
 
-  this._name = '[Aggregator-'+this._uid+']';
+  this._name = '['+ testRun.name +'] ';
 };
 
 Aggregator.instances = 0;
@@ -181,7 +181,7 @@ Aggregator.SE_INTERPRETER_SUPPORT = '1.0.6';
 
 Aggregator.prototype.startTestRun = function(testRun, info) {
   if (!info.success) {
-    console.log('[ERROR] '+ this._name +' '+ utils.inspect(info));
+    console.log('[ERROR] '+ this._name +' - Could not start: '+ utils.inspect(info));
     return;
   }
   // console.log(this._name +'::startTestRun - '+ testRun.name);
@@ -190,7 +190,7 @@ Aggregator.prototype.startTestRun = function(testRun, info) {
 
 Aggregator.prototype.startStep  = function startStep (testRun, step) {
   this._step = getStep(step);
-  this._step.name = testRun.name || '';
+  this._step.name = step.name || testRun.name || '';
 };
 
 Aggregator.prototype.endStep = function endStep (testRun, step, info) {
@@ -205,7 +205,6 @@ Aggregator.prototype.endTestRun = function(testRun, info) {
   var report = generateReport(this._suite, testRun);
   if (!info.success) {
     console.log('[ERROR] '+ this._name +' '+ utils.inspect(info));
-    return;
   }
   writeReport(this._name, sanitize(this._opts.path), report);
 };
