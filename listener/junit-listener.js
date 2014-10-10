@@ -69,7 +69,8 @@ var getStep = function getStep (step) {
 };
 
 var updateSuite = function updateSuite (suite, info, step) {
-  if (!step.noreport) {
+  if (!!step.noreport && step.noreport === "true") { return; }
+  if (step.noreport === "false") {
     if (!info.success) {
       suite.failures += 1;
     }
