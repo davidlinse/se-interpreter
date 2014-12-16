@@ -34,7 +34,7 @@ var updateTime = function updateTime (/* step or suite */ subject) {
 };
 
 var updateAssertions = function updateAssertions (subject, type) {
-  subject.assertions += /(assert|verify)/.test(type);
+  subject.assertions += Number(/(assert|verify)/.test(type));
 };
 
 var formatTime = function formatTime (subject) {
