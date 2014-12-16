@@ -15,7 +15,7 @@
   output from happening, just like the --silent command.
 
   author:  david linse
-  version: 0.1.7-alpha3
+  version: 0.1.7-alpha4
 
   TODO: add stderr to to testsuite xml
   TODO: add test-suites support (single file ?)
@@ -69,19 +69,20 @@ var getStep = function getStep (step) {
 };
 
 var updateSuite = function updateSuite (suite, info, step) {
-  if (!!step.noreport && step.noreport === "true") { return; }
-  if (step.noreport === "false") {
-    if (!info.success) {
-      suite.failures += 1;
-    }
-    suite.tests += 1;
-    updateAssertions(suite, step.type);
+  if (!!step.noreport && step.noreport === 'true') {
+    return;
   }
+
+  if (!info.success) {
+    suite.failures += 1;
+  }
+
+  suite.tests += 1;
+  updateAssertions(suite, step.type);
 };
 
 var updateStep = function updateStep (_step, info, step) {
   updateTime(_step);
-  updateAssertions(_step, step.type);
   updateFailures(_step, info, step);
 };
 
@@ -198,7 +199,9 @@ Aggregator.prototype.endStep = function endStep (testRun, step, info) {
   logOnError(this._name, info, step);
   updateStep(this._step, info, step);
   updateSuite(this._suite, info, step);
-  this._suite.steps.push(this._step);
+  if (step.noreport === undefined) {
+    this._suite.steps.push(this._step);
+  }
   this._step = null;
 };
 
