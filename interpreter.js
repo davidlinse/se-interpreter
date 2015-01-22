@@ -31,8 +31,17 @@ var sax = require('sax');
 var prefixes = {
   'assert': function(getter, testRun, callback) {
     getter.run(testRun, function(info) {
-      if (info.error) { callback(info); return; }
-      var match = getter.cmp ? ("" + info.value) == testRun.p(getter.cmp) : info.value;
+
+      if (info.error) {
+        callback(info);
+        return;
+      }
+
+      var actual   = '' + info.value,
+          expected = !!getter.cmp ? testRun.p(getter.cmp) : true,
+          msg = '';
+
+      var match = getter.cmp ? actual == expected : info.value;
 
       if (testRun.currentStep().negated) {
         if (match) {
@@ -40,11 +49,22 @@ var prefixes = {
         } else {
           callback({ 'success': true });
         }
-      } else {
+      }
+      else {
         if (match) {
           callback({ 'success': true });
-        } else {
-          callback({ 'success': false, 'error': new Error(getter.cmp ? getter.cmp + ' does not match' : getter.name + ' is false') });
+        }
+        else {
+
+          if (getter.cmp) {
+            msg += getter.cmp + ' does not match. ';
+            msg += 'Expected "'+ expected +'" but got "'+ actual +'"';
+          }
+          else {
+            msg = getter.name + ' is false';
+          }
+
+          callback({ 'success': false, 'error': new Error(msg) });
         }
       }
     });
@@ -54,6 +74,7 @@ var prefixes = {
       if (info.error) { callback(info); return; }
       callback({ 'success': !!((getter.cmp ? ("" + info.value) == testRun.p(getter.cmp) : info.value) ^ testRun.currentStep().negated) });
     });
+
   },
   'store': function(getter, testRun, callback) {
     getter.run(testRun, function(info) {
@@ -192,9 +213,11 @@ TestRun.prototype.next = function(callback) {
     callback(info);
     return;
   }
+
   var testRun = this;
   var wrappedCallback = callback;
   wrappedCallback = function(info) {
+
     testRun.success = testRun.success && info.success;
     testRun.lastError = info.error || testRun.lastError;
     if (testRun.listener && testRun.listener.endStep) {
@@ -414,7 +437,7 @@ function getInterpreterListener(testRun) {
         if (info.error) {
           console.log(testRun.name + ": " + "Test failed: ".red + util.inspect(info.error));
         } else {
-          console.log(testRun.name + ": " + "Test failed ".red);
+          console.log(testRun.name + ": " + "Test run failed ".red);
         }
       }
     },
@@ -427,7 +450,7 @@ function getInterpreterListener(testRun) {
         if (info.error) {
           console.log(testRun.name + ": " + "Failed ".red + util.inspect(info.error));
         } else {
-          console.log(testRun.name + ": " + "Failed ".red);
+          console.log(testRun.name + ": " + "Step Failed ".red + JSON.stringify(step).grey);
         }
       }
     }
