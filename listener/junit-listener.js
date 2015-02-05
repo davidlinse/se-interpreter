@@ -153,7 +153,7 @@ var log = function log (name, status, step, /*null*/ message) {
 
 var logOnError = function logOnError (name, status, step, /*null*/ message) {
   if (status.success === true) { return; }
-  message = '[FAIL] ' + name || '' +  utils.inspect(step);
+  message = '[FAIL] ' + (name || '') + (' ' + (step.step || '')) + ' '+ step.name;
   console.log(message);
 };
 
